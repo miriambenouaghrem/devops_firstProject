@@ -3,7 +3,7 @@ pipeline {
   options { skipDefaultCheckout(true); timestamps() }
 
   environment {
-    IMAGE = "<YOUR_DOCKERHUB_USERNAME>/devops-firstproject"  // <-- change this
+    IMAGE = "ibtihelesprit/devops-firstproject"  
     TAG   = "build-${env.BUILD_NUMBER}"
   }
 
