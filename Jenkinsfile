@@ -21,5 +21,28 @@ pipeline {
         sh 'docker build -t ibtihel/devops-firstproject:build-${BUILD_NUMBER} .'
       }
     }
+    environment {
+  IMAGE = "<your-dockerhub-username>/devops-firstproject"
+  TAG   = "build-${env.BUILD_NUMBER}"
+}
+
+stage('Docker Push') {
+  steps {
+    // tag also as 'latest' (handy for pulls)
+    sh '''
+      docker tag $IMAGE:$TAG $IMAGE:latest || true
+    '''
+    withCredentials([usernamePassword(credentialsId: 'dockerhub',
+                                      usernameVariable: 'USER',
+                                      passwordVariable: 'PASS')]) {
+      sh '''
+        echo "$PASS" | docker login -u "$USER" --password-stdin
+        docker push $IMAGE:$TAG
+        docker push $IMAGE:latest
+        docker logout
+      '''
+    }
+  }
+}
   }
 }
