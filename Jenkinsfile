@@ -1,6 +1,12 @@
 pipeline {
   agent any
   options { skipDefaultCheckout(true); timestamps() }
+
+  environment {
+    IMAGE = "<YOUR_DOCKERHUB_USERNAME>/devops-firstproject"  // <-- change this
+    TAG   = "build-${env.BUILD_NUMBER}"
+  }
+
   stages {
     stage('git') {
       steps {
@@ -8,6 +14,7 @@ pipeline {
             url: 'https://github.com/miriambenouaghrem/devops_firstProject.git'
       }
     }
+
     stage('Build, Test & Package') {
       steps {
         sh '''
@@ -16,33 +23,27 @@ pipeline {
         '''
       }
     }
+
     stage('Docker Build') {
       steps {
-        sh 'docker build -t ibtihel/devops-firstproject:build-${BUILD_NUMBER} .'
+        sh 'docker build -t $IMAGE:$TAG .'
       }
     }
-    environment {
-  IMAGE = "<your-dockerhub-username>/devops-firstproject"
-  TAG   = "build-${env.BUILD_NUMBER}"
-}
 
-stage('Docker Push') {
-  steps {
-    // tag also as 'latest' (handy for pulls)
-    sh '''
-      docker tag $IMAGE:$TAG $IMAGE:latest || true
-    '''
-    withCredentials([usernamePassword(credentialsId: 'dockerhub',
-                                      usernameVariable: 'USER',
-                                      passwordVariable: 'PASS')]) {
-      sh '''
-        echo "$PASS" | docker login -u "$USER" --password-stdin
-        docker push $IMAGE:$TAG
-        docker push $IMAGE:latest
-        docker logout
-      '''
+    stage('Docker Push') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub',
+                                          usernameVariable: 'USER',
+                                          passwordVariable: 'PASS')]) {
+          sh '''
+            echo "$PASS" | docker login -u "$USER" --password-stdin
+            docker push $IMAGE:$TAG
+            docker tag  $IMAGE:$TAG $IMAGE:latest
+            docker push $IMAGE:latest
+            docker logout
+          '''
+        }
+      }
     }
-  }
-}
   }
 }
