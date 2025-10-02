@@ -1,7 +1,6 @@
 pipeline {
   agent any
   options { skipDefaultCheckout(true); timestamps() }
-
   stages {
     stage('git') {
       steps {
@@ -18,9 +17,9 @@ pipeline {
       }
     }
     stage('Docker Build') {
-  steps {
-    sh 'docker build -t ibtihel/devops-firstproject:build-${BUILD_NUMBER} .'
-  }
-}
+      steps {
+        sh 'docker build -t ibtihel/devops-firstproject:build-${BUILD_NUMBER} .'
+      }
+    }
   }
 }
