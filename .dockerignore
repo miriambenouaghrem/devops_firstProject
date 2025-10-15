@@ -1,5 +1,12 @@
-target/
+# .dockerignore
+# ignore typical clutter
 .git
 .gitignore
 README.md
-Dockerfile
+*.iml
+.idea
+**/.DS_Store
+
+# allow only the jar from target
+target/*
+!target/*.jar
