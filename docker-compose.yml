@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: studentdb
+    # You don't need to expose 3306 to the host unless you want external tools to connect.
+    # Comment these lines to avoid port conflicts:
+    # ports:
+    #   - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  app:
+    image: miriambenouaghrem1/devops_firstproject:latest
+    container_name: student-app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/studentdb?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      # give the pool time to wait for DB on first boot
+      SPRING_DATASOURCE_HIKARI_INITIALIZATIONFAILTIMEOUT: "60000"
+    ports:
+      - "9090:8089"
+    restart: on-failure
+
