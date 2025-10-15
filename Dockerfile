@@ -1,21 +1,19 @@
-# 1️⃣ Utiliser une image Java 17 légère
-FROM eclipse-temurin:17-jre-alpine
-
-# 2️⃣ Créer le dossier de travail
+# 1) Build stage
+FROM maven:3.9-eclipse-temurin-17 AS builder
 WORKDIR /app
+COPY pom.xml .
+# pre-fetch deps for faster rebuilds
+RUN mvn -q -e -U -DskipTests dependency:go-offline
+COPY src ./src
+RUN mvn -q -DskipTests package
 
-# 3️⃣ Copier le jar compilé dans le conteneur
-COPY target/student-management-0.0.1-SNAPSHOT.jar app.jar
-
-# 4️⃣ Créer un utilisateur non-root
-RUN addgroup -S app && adduser -S -G app app
-USER app
-
-# 5️⃣ Exposer le port de ton app Spring Boot
-EXPOSE 8089
-
-# 6️⃣ Option pour variables JVM
-ENV JAVA_OPTS=""
-
-# 7️⃣ Lancer ton application
-ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar /app/app.jar"]
+# 2) Runtime stage
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+# copy the built jar (adjust artifact name if needed)
+COPY --from=builder /app/target/student-management-0.0.1-SNAPSHOT.jar app.jar
+# run as non-root
+RUN adduser -D appuser
+USER appuser
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","/app/app.jar"]
