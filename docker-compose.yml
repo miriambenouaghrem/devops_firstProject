@@ -8,8 +8,8 @@ services:
       MYSQL_DATABASE: studentdb
     # You don't need to expose 3306 to the host unless you want external tools to connect.
     # Comment these lines to avoid port conflicts:
-     #ports:
-      #- "3307:3306"     # host:container  <-- use 3307 on the host
+     ports:
+      - "3307:3306"     # host:container  <-- use 3307 on the host
 
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-proot"]
