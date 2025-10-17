@@ -109,11 +109,7 @@
         </plugin>
 
         <!-- ✅ 3. Spring Boot plugin: for building runnable JARs -->
-        <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <version>3.3.2</version> <!-- or match your Spring Boot version -->
-        </plugin>
+      
         </plugins>
 
 
