@@ -7,15 +7,12 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: studentdb
     # You don't need to expose 3306 to the host unless you want external tools to connect.
-    # Comment these lines to avoid port conflicts:
-<<<<<<< HEAD
+    # Comment these lines to avoid port conflicts
      ports:
        - "3306:3306"
-=======
      #ports:
       #- "3307:3306"     # host:container  <-- use 3307 on the host
 
->>>>>>> 5b23114aca26b8874a970dbddf7e097640274f33
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-proot"]
       interval: 5s
