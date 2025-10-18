@@ -109,7 +109,6 @@
         </plugin>
 
         <!-- ✅ 3. Spring Boot plugin: for building runnable JARs -->
-
         </plugins>
 
 
